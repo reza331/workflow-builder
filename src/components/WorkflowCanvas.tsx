@@ -1,14 +1,16 @@
 'use client';
 import '@xyflow/react/dist/style.css';
-import { Background, Controls, MarkerType, ReactFlow, type NodeTypes, type Connection, } from '@xyflow/react';
+import { useReactFlow, Background, Controls, MarkerType, ReactFlow, type NodeTypes, type Connection, } from '@xyflow/react';
 import { useEdges, useNodes, useSelectedNodeId, useWorkflowActions } from '@/features/workflow/store';
 import { useCallback, useEffect } from 'react';
-import { WorkflowNode, WorkflowEdge } from '@/features/workflow/types';
+import { WorkflowNode, WorkflowEdge, WorkflowNodeType } from '@/features/workflow/types';
 import TriggerNode from './nodes/TriggerNode';
 import ConditionNode from './nodes/ConditionNode';
 import ActionNode from './nodes/ActionNode';
 import DelayNode from './nodes/DelayNode';
 import { canConnect } from '@/features/workflow/validation';
+import type { DragEvent } from 'react';
+import { createWorkflowNode } from '@/features/workflow/node-factory';
 
 const nodeTypes: NodeTypes = {
     trigger: TriggerNode,
@@ -22,8 +24,9 @@ export default function WorkflowCanvas() {
     const nodes = useNodes();
     const edges = useEdges();
     const selectedNodeId = useSelectedNodeId();
+    const { screenToFlowPosition } = useReactFlow();
 
-    const { startNodeDrag, finishNodeDrag, applyNodeChanges, applyEdgeChanges, selectNode, addEdge, deleteNode, deleteEdge, duplicateNode, redo, undo } = useWorkflowActions();
+    const { addNode, startNodeDrag, finishNodeDrag, applyNodeChanges, applyEdgeChanges, selectNode, addEdge, deleteNode, deleteEdge, duplicateNode, redo, undo } = useWorkflowActions();
 
     const handleNodeClick = useCallback(
         (_event: React.MouseEvent, node: WorkflowNode) => {
@@ -70,6 +73,43 @@ export default function WorkflowCanvas() {
             addEdge(edge);
         },
         [addEdge, nodes, edges],
+    );
+
+    const handleDragOver = useCallback(
+        (event: DragEvent) => {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = 'move';
+        },
+        [],
+    );
+
+    const handleDrop = useCallback(
+        (event: DragEvent) => {
+            event.preventDefault();
+
+            const type = event.dataTransfer.getData(
+                'application/reactflow',
+            ) as WorkflowNodeType;
+
+            if (!type) {
+                return;
+            }
+
+            const position = screenToFlowPosition({
+                x: event.clientX,
+                y: event.clientY,
+            });
+
+            const node = createWorkflowNode(
+                type,
+                position,
+            );
+
+            addNode(node);
+        },
+
+        [addNode, screenToFlowPosition],
+
     );
 
     useEffect(() => {
@@ -179,6 +219,8 @@ export default function WorkflowCanvas() {
                 onConnect={handleConnect}
                 onNodeDragStart={startNodeDrag}
                 onNodeDragStop={finishNodeDrag}
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
             >
                 <Background />
                 <Controls style={{ color: '#00000075' }} />

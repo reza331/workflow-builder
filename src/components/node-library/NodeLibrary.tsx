@@ -1,7 +1,5 @@
 'use client';
 import { Zap, GitBranch, Play, Clock } from 'lucide-react';
-import { useWorkflowActions } from '@/features/workflow/store';
-import { createWorkflowNode } from '@/features/workflow/node-factory';
 import type { WorkflowNodeType } from '@/features/workflow/types';
 
 const nodeItems: { type: WorkflowNodeType; label: string; description: string; }[] = [
@@ -35,16 +33,6 @@ const icons = {
 };
 
 export default function NodeLibrary() {
-
-    const { addNode } = useWorkflowActions();
-
-    const handleAddNode = (
-        type: WorkflowNodeType,
-    ) => {
-        const node = createWorkflowNode(type);
-
-        addNode(node);
-    }
 
     const handleDragStart = (
         event: React.DragEvent,
@@ -80,9 +68,6 @@ export default function NodeLibrary() {
                             type="button"
                             onDragStart={(event) =>
                                 handleDragStart(event, item.type)
-                            }
-                            onClick={() =>
-                                handleAddNode(item.type)
                             }
                             className="flex items-center gap-3 rounded-xl border border-base-300 p-3 text-left transition-colors hover:border-primary hover:bg-base-200"
                         >
