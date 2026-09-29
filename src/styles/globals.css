@@ -1,0 +1,12 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+@theme {
+    --color-A: #fcfcfc;
+    --color-B: #ffffff;
+    --color-C: black;
+}
+
+x{
+    color: #00000075;
+}
