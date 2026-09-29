@@ -1,5 +1,5 @@
 import type { DelayConfig } from '@/features/workflow/types';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Clock3 } from 'lucide-react';
 
 type Props = {
     config: DelayConfig;
@@ -17,6 +17,22 @@ export default function DelayInspector({
 }: Props) {
     return (
         <div className="flex flex-col gap-5">
+
+
+            <div className="flex items-center gap-1">
+                <div className="flex size-7 items-center justify-center rounded-lg bg-Delay/25">
+                    <Clock3
+                        size={18}
+                        className="text-Delay"
+                    />
+                </div>
+                <div className="min-w-0 ">
+                    <p className="truncate text-xs font-semibold ">
+                        Delay
+                    </p>
+                </div>
+            </div>
+
             <label className="form-control">
                 <span className="text-xs font-medium">
                     Node Name

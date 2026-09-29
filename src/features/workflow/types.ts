@@ -6,6 +6,9 @@ export type WorkflowNodeType =
     | 'action'
     | 'delay';
 
+
+    
+
 export type TriggerConfig = {
     type: 'trigger';
     name: string;
@@ -61,4 +64,5 @@ export type WorkflowState = {
     isDirty: boolean;
     past: WorkflowSnapshot[];
     future: WorkflowSnapshot[];
+    saveStatus: 'saved' | 'unsaved' | 'saving';
 };

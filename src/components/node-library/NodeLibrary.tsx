@@ -56,7 +56,7 @@ export default function NodeLibrary() {
     };
 
     return (
-        <aside className="flex h-full w-80 flex-col text-C bg-B shadow-lg">
+        <aside className="hidden lg:flex h-full w-80 flex-col text-C bg-B shadow-lg">
             {/*  */}
             <div className="ps-4 pt-4">
                 <h2 className="font-semibold">

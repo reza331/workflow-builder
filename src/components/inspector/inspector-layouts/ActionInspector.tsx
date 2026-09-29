@@ -1,5 +1,5 @@
 import type { ActionConfig } from '@/features/workflow/types';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Play } from 'lucide-react';
 
 type Props = {
     config: ActionConfig;
@@ -10,6 +10,21 @@ type Props = {
 export default function ActionInspector({ config, onChange, errors }: Props) {
     return (
         <div className="flex flex-col gap-5">
+
+
+            <div className="flex items-center gap-1">
+                <div className="flex size-7 items-center justify-center rounded-lg bg-Action/25">
+                    <Play
+                        size={18}
+                        className="text-Action"
+                    />
+                </div>
+                <div className="min-w-0 ">
+                    <p className="truncate text-xs font-semibold ">
+                        Action
+                    </p>
+                </div>
+            </div>
 
             <label className="form-control">
                 <span className="text-xs font-medium">

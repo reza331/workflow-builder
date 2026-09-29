@@ -1,6 +1,9 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { createWorkflowNode } from '@/features/workflow/node-factory';
+import type { WorkflowNodeType } from '@/features/workflow/types';
 import {
     useEdges,
+    useIsDirty,
     useNodes,
     useSelectedNodeId,
     useWorkflowActions,
@@ -12,20 +15,27 @@ import {
     saveWorkflowDraft,
 } from '@/features/workflow/workflow-utils';
 
+const AUTOSAVE_DELAY = 3_000;
+
 export default function useWorkflowHandlers() {
 
     const edges = useEdges();
+    const isDirty = useIsDirty()
     const nodes = useNodes();
     const selectedNodeId = useSelectedNodeId();
+    const [autosaveSeconds, setAutosaveSeconds] = useState(0);
 
     const {
+        addNode,
         deleteNode,
         deleteEdge,
         duplicateNode,
         undo,
         redo,
         setValidationErrors,
-        loadWorkflow
+        loadWorkflow,
+        setSaveStatus,
+        markAsSaved,
     } = useWorkflowActions();
 
     const handleValidate = useCallback(() => {
@@ -94,8 +104,12 @@ export default function useWorkflowHandlers() {
     }, [nodes, edges]);
 
     const handleSaveDraft = useCallback(() => {
+        setSaveStatus('saving');
+
         saveWorkflowDraft(nodes, edges);
-    }, [nodes, edges]);
+
+        markAsSaved();
+    }, [nodes, edges, setSaveStatus, markAsSaved]);
 
     const handleLoadDraft = useCallback(() => {
 
@@ -107,6 +121,52 @@ export default function useWorkflowHandlers() {
 
     }, [loadWorkflow]);
 
+
+    const handleAddNode = useCallback(
+        (type: WorkflowNodeType) => {
+            const node = createWorkflowNode(type);
+
+            addNode(node);
+        },
+        [addNode],
+    );
+
+
+    useEffect(() => {
+        if (!isDirty) {
+            setAutosaveSeconds(0);
+            return;
+        }
+
+        setAutosaveSeconds(AUTOSAVE_DELAY / 1000);
+
+        const interval = setInterval(() => {
+            setAutosaveSeconds((seconds) =>
+                Math.max(seconds - 1, 0),
+            );
+        }, 1000);
+
+        const timeout = setTimeout(() => {
+            setSaveStatus('saving');
+
+            saveWorkflowDraft(nodes, edges);
+
+            markAsSaved();
+            setAutosaveSeconds(0);
+        }, AUTOSAVE_DELAY);
+
+        return () => {
+            clearInterval(interval);
+            clearTimeout(timeout);
+        };
+    }, [
+        nodes,
+        edges,
+        isDirty,
+        setSaveStatus,
+        markAsSaved,
+    ]);
+
     return {
         handleUndo,
         handleRedo,
@@ -116,5 +176,7 @@ export default function useWorkflowHandlers() {
         handleExport,
         handleSaveDraft,
         handleLoadDraft,
+        handleAddNode,
+        autosaveSeconds
     };
 }

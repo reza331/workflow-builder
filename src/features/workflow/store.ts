@@ -35,6 +35,13 @@ type WorkflowActions = {
     setValidationErrors: (
         errors: WorkflowValidationError[],
     ) => void;
+
+    setSaveStatus: (
+        status: 'saved' | 'unsaved' | 'saving',
+    ) => void;
+
+    markAsSaved: () => void;
+
 }
 
 interface WorkflowStore extends WorkflowState {
@@ -56,6 +63,7 @@ const useWorkflowStore = create<WorkflowStore>((set) => ({
     past: [],
     future: [],
     isDirty: false,
+    saveStatus: 'saved',
 
     actions: {
 
@@ -71,6 +79,7 @@ const useWorkflowStore = create<WorkflowStore>((set) => ({
                     past: [...state.past, snapshot],
                     future: [],
                     isDirty: true,
+                    saveStatus: 'unsaved',
                 };
             }),
 
@@ -90,6 +99,7 @@ const useWorkflowStore = create<WorkflowStore>((set) => ({
                     past: [...state.past, snapshot],
                     future: [],
                     isDirty: true,
+                    saveStatus: 'unsaved',
                 };
             }),
 
@@ -119,6 +129,7 @@ const useWorkflowStore = create<WorkflowStore>((set) => ({
                     past: [...state.past, snapshot],
                     future: [],
                     isDirty: true,
+                    saveStatus: 'unsaved',
                 };
             }),
 
@@ -166,6 +177,7 @@ const useWorkflowStore = create<WorkflowStore>((set) => ({
                     past: [...state.past, snapshot],
                     future: [],
                     isDirty: true,
+                    saveStatus: 'unsaved',
                 };
             }),
 
@@ -181,6 +193,7 @@ const useWorkflowStore = create<WorkflowStore>((set) => ({
                     past: [...state.past, snapshot],
                     future: [],
                     isDirty: true,
+                    saveStatus: 'unsaved',
                 };
             }),
 
@@ -199,6 +212,7 @@ const useWorkflowStore = create<WorkflowStore>((set) => ({
                     past: [...state.past, snapshot],
                     future: [],
                     isDirty: true,
+                    saveStatus: 'unsaved',
                 };
             }),
 
@@ -305,6 +319,7 @@ const useWorkflowStore = create<WorkflowStore>((set) => ({
                 return {
                     nodes,
                     isDirty: true,
+                    saveStatus: 'unsaved',
                 };
             }),
 
@@ -336,6 +351,7 @@ const useWorkflowStore = create<WorkflowStore>((set) => ({
                 return {
                     edges,
                     isDirty: true,
+                    saveStatus: 'unsaved',
                 };
             }),
 
@@ -392,6 +408,19 @@ const useWorkflowStore = create<WorkflowStore>((set) => ({
                 future: [],
             }),
 
+
+        setSaveStatus: (status) =>
+            set({
+                saveStatus: status,
+            }),
+
+        markAsSaved: () =>
+            set({
+                isDirty: false,
+                saveStatus: 'saved',
+            }),
+
+
     }
 
 }));
@@ -407,5 +436,7 @@ export const useIsDirty = () => useWorkflowStore((state) => state.isDirty);
 export const usePast = () => useWorkflowStore((state) => state.past);
 
 export const useFuture = () => useWorkflowStore((state) => state.future);
+
+export const useSaveStatus = () => useWorkflowStore((state) => state.saveStatus);
 
 export const useWorkflowActions = () => useWorkflowStore((state) => state.actions);

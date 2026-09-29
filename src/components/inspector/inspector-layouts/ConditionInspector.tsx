@@ -1,5 +1,5 @@
 import type { ConditionConfig } from '@/features/workflow/types';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, GitBranch } from 'lucide-react';
 
 type Props = {
     config: ConditionConfig;
@@ -13,6 +13,20 @@ type Props = {
 export default function ConditionInspector({ config, onChange, errors }: Props) {
     return (
         <div className="flex flex-col gap-5">
+
+            <div className="flex items-center gap-1">
+                <div className="flex size-7 items-center justify-center rounded-lg bg-Condition/25">
+                    <GitBranch
+                        size={18}
+                        className="text-Condition"
+                    />
+                </div>
+                <div className="min-w-0 ">
+                    <p className="truncate text-xs font-semibold ">
+                        Condition
+                    </p>
+                </div>
+            </div>
 
             <label className="form-control">
                 <span className="text-xs font-medium">

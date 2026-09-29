@@ -1,5 +1,5 @@
 import type { TriggerConfig } from '@/features/workflow/types';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Zap } from 'lucide-react';
 
 type Props = {
     config: TriggerConfig;
@@ -10,9 +10,24 @@ type Props = {
 
 }
 
-export default function TriggerInspector({ config, onChange , errors }: Props) {
+export default function TriggerInspector({ config, onChange, errors }: Props) {
     return (
         <div className="flex flex-col gap-5">
+
+            <div className="flex items-center gap-1">
+                <div className="flex size-7 items-center justify-center rounded-lg bg-Trigger/25">
+                    <Zap
+                        size={18}
+                        className="text-Trigger"
+                    />
+                </div>
+                <div className="min-w-0 ">
+                    <p className="truncate text-xs font-semibold ">
+                        Trigger
+                    </p>
+                </div>
+            </div>
+
             <label className="form-control">
                 <span className="text-xs font-medium">
                     Node Name

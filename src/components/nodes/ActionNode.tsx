@@ -20,7 +20,7 @@ export default function ActionNode({ data, selected }: NodeProps<WorkflowNode>) 
     return (
         <div
             className={`
-                relative w-56 rounded-2xl bg-B text-C shadow-sm
+                relative w-56 rounded-2xl bg-B text-C shadow-sm touch-none
                 ${selected
                     ? 'border-primary border-2'
                     : 'border-0'

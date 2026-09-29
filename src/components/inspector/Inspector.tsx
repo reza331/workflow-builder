@@ -26,7 +26,7 @@ export default function Inspector() {
 
     if (!selectedNode) {
         return (
-            <aside className="flex h-full w-72 items-center justify-center bg-B shadow-md p-6">
+            <aside className="hidden lg:flex h-full w-72 items-center justify-center bg-B shadow-md p-6">
                 <div className='flex flex-col items-center gap-2'>
                     <MousePointerClick
                         size={32}
@@ -60,7 +60,7 @@ export default function Inspector() {
     };
 
     return (
-        <aside className="h-full w-75 bg-B text-C shadow-md relative">
+        <aside className="hidden lg:block h-full w-75 bg-B text-C shadow-md relative">
 
             <div className="border-b border-C/10 p-4">
                 <h2 className="mt-1 text-sm font-semibold">

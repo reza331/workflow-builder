@@ -7,6 +7,8 @@ export default function useWorkflowKeyboardHandlers() {
         handleRedo,
         handleDuplicate,
         handleDelete,
+        handleSaveDraft,
+        handleExport,
     } = useWorkflowHandlers();
 
     useEffect(() => {
@@ -58,6 +60,35 @@ export default function useWorkflowKeyboardHandlers() {
                 return;
             }
 
+            // Save Draft
+            // Ctrl/Cmd + S
+
+            if (
+                isModifierPressed &&
+                event.code === 'KeyS'
+            ) {
+                event.preventDefault();
+
+                handleSaveDraft();
+
+                return;
+            }
+
+            // Export JSON
+            // Ctrl/Cmd + Shift + E
+
+            if (
+                isModifierPressed &&
+                event.shiftKey &&
+                event.code === 'KeyE'
+            ) {
+                event.preventDefault();
+
+                handleExport();
+
+                return;
+            }
+
             // Delete / Backspace
 
             if (
@@ -86,5 +117,7 @@ export default function useWorkflowKeyboardHandlers() {
         handleRedo,
         handleDuplicate,
         handleDelete,
+        handleSaveDraft,
+        handleExport,
     ]);
 }

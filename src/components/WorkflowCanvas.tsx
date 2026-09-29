@@ -1,6 +1,6 @@
 'use client';
 import '@xyflow/react/dist/style.css';
-import { Background, Controls, ReactFlow, type NodeTypes } from '@xyflow/react';
+import { Background, Controls, MiniMap, ReactFlow, type NodeTypes } from '@xyflow/react';
 import { useEdges, useNodes, useWorkflowActions } from '@/features/workflow/store';
 import TriggerNode from './nodes/TriggerNode';
 import ConditionNode from './nodes/ConditionNode';
@@ -39,9 +39,10 @@ export default function WorkflowCanvas() {
                 onNodeDragStop={finishNodeDrag}
                 onDragOver={handleDragOver}
                 onDrop={handleDrop}
+                proOptions={{ hideAttribution: true }}
             >
                 <Background />
-                <Controls style={{ color: '#00000075' }} />
+                <Controls className='bottom-12!' style={{ color: '#00000075' }} />
             </ReactFlow>
         </div>
     );
