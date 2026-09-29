@@ -124,6 +124,15 @@ const validateNodes = (
                         message: 'Action type is required.',
                     });
                 }
+
+                if (!config.value.trim()) {
+                    errors.push({
+                        id: `required-action-value-${node.id}`,
+                        nodeId: node.id,
+                        message: 'Action value is required.',
+                    });
+                }
+
                 break;
 
             case 'delay':

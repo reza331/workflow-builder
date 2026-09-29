@@ -1,10 +1,16 @@
 'use client';
-import { AlertCircle, Play } from 'lucide-react';
+import { Play } from 'lucide-react';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import type { WorkflowNode } from '@/features/workflow/types';
 
+const actionTypeLabels: Record<string, string> = {
+    send_sms: 'Send SMS',
+    send_email: 'Send Email',
+    create_task: 'Create Task',
+};
+
 export default function ActionNode({ data, selected }: NodeProps<WorkflowNode>) {
-    
+
     const { config, errors } = data;
 
     if (config.type !== 'action') {
@@ -14,52 +20,68 @@ export default function ActionNode({ data, selected }: NodeProps<WorkflowNode>) 
     return (
         <div
             className={`
-                relative w-56 rounded-xl border bg-base-100 p-4 shadow-sm
+                relative w-56 rounded-2xl bg-B text-C shadow-sm
                 ${selected
-                    ? 'border-primary ring-2 ring-primary/20'
-                    : 'border-base-300'
+                    ? 'border-primary border-2'
+                    : 'border-0'
                 }
             `}
         >
-            <Handle
-                type="target"
-                position={Position.Left}
-                className="!size-3 !border-2 !border-base-100 !bg-primary"
-            />
 
-            <div className="flex items-center gap-3">
-                <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-info/10">
+
+            <div className="flex p-3 items-center gap-3 bg-Action/15 rounded-t-2xl">
+                <div className="flex size-11 items-center justify-center rounded-lg bg-Action/25">
                     <Play
-                        size={18}
-                        className="text-info"
+                        size={24}
+                        className="text-Action"
                     />
                 </div>
-
-                <div className="min-w-0">
-                    <p className="text-xs text-base-content/50">
+                <div className="min-w-0 ">
+                    <p className="truncate text-sm font-semibold ">
+                        {config.type === 'action'
+                            ? config.name
+                            : ''}
+                    </p>
+                    <p className="text-xs font-medium text-Action">
                         Action
                     </p>
 
-                    <p className="truncate text-sm font-semibold">
-                        {config.name}
-                    </p>
                 </div>
             </div>
 
-            {errors.length > 0 && (
-                <div className="mt-3 flex items-center gap-2 rounded-lg bg-error/10 px-3 py-2 text-xs text-error">
-                    <AlertCircle size={14} />
+            <div className='px-3 mt-2'>
+                <div className='text-xs font-semibold text-C/35'>Type</div>
+                <div className='text-sm font-medium'>{actionTypeLabels[config.actionType] ?? config.actionType}</div>
+            </div>
 
-                    <span className="font-medium">
-                        {errors[0]}
-                    </span>
+            <div className='px-3 mt-2 pb-4'>
+                <div className='text-xs font-semibold text-C/35'>Message</div>
+                <div className='text-sm font-medium'>{config.value ? config.value : 'Message ...'}</div>
+            </div>
+
+            {errors.length > 0 && (
+                <div className='bg-rose-700 text-[10px] flex items-center justify-center size-fit px-2 py-1 text-white absolute -top-2 -right-2 rounded-full'>
+                    {errors.length}
                 </div>
+                // <div className="mt-3 flex items-center gap-2 rounded-lg bg-error/10 px-3 py-2 text-xs text-error">
+                //     <AlertCircle size={14} />
+
+                //     <span className="font-medium">
+                //         {errors[0]}
+                //     </span>
+                // </div>
             )}
+
+            <Handle
+                type="target"
+                position={Position.Left}
+                className="!size-3 !bg-primary"
+            />
 
             <Handle
                 type="source"
                 position={Position.Right}
-                className="!size-3 !border-2 !border-base-100 !bg-info"
+                className="!size-3 !bg-info"
             />
         </div>
     );

@@ -1,8 +1,18 @@
 'use client';
-import { GitBranch, AlertCircle } from 'lucide-react';
+import { GitBranch } from 'lucide-react';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
-
 import type { WorkflowNode } from '@/features/workflow/types';
+
+const conditionTypeLabels: Record<string, string> = {
+    customer_value: 'Customer Value',
+    order_total: 'Order Total',
+};
+
+const operatorLabels: Record<string, string> = {
+    greater_than: 'Greater than ( > )',
+    less_than: 'Less than ( < )',
+    equals: 'Equals ( = )',
+};
 
 export default function ConditionNode({ data, selected, }: NodeProps<WorkflowNode>) {
 
@@ -15,54 +25,69 @@ export default function ConditionNode({ data, selected, }: NodeProps<WorkflowNod
     return (
         <div
             className={`
-                relative w-56 rounded-xl border bg-base-100 p-4 shadow-sm
+                relative w-56 shadow-sm
+                rounded-2xl
+                bg-B
+                text-C
                 ${selected
-                    ? 'border-primary ring-2 ring-primary/20'
-                    : 'border-base-300'
+                    ? 'border-primary border-2'
+                    : 'border-0'
                 }
             `}
         >
-            <Handle
-                type="target"
-                position={Position.Left}
-                className="!size-3 !border-2 !border-base-100 !bg-primary"
-            />
 
-            <div className="flex items-center gap-3">
-                <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-warning/10">
+
+            <div className="flex p-3 items-center gap-3 bg-Condition/15 rounded-t-2xl">
+                <div className="flex size-11 items-center justify-center rounded-lg bg-Condition/25">
                     <GitBranch
-                        size={18}
-                        className="text-warning"
+                        size={24}
+                        className="text-Condition"
                     />
                 </div>
-
-                <div className="min-w-0">
-                    <p className="text-xs text-base-content/50">
-                        Condition
+                <div className="min-w-0 ">
+                    <p className="truncate text-sm font-semibold ">
+                        {config.type === 'condition'
+                            ? config.name
+                            : ''}
                     </p>
-
-                    <p className="truncate text-sm font-semibold">
-                        {config.name}
+                    <p className="text-xs font-medium text-Condition">
+                        Condition
                     </p>
                 </div>
             </div>
 
-            {errors.length > 0 && (
-                <div className="mt-3 flex items-center gap-2 rounded-lg bg-error/10 px-3 py-2 text-xs text-error">
-                    <AlertCircle size={14} />
+            <div className='px-3 mt-3'>
+                <div className='text-xs font-semibold text-C/35'>Condition type</div>
+                <div className='text-sm font-medium'>{conditionTypeLabels[config.conditionType]}{' '}</div>
+            </div>
+            <div className='px-3 mt-2'>
+                <div className='text-xs font-semibold text-C/35'>Operator</div>
+                <div className='text-sm font-medium'> {operatorLabels[config.operator]}{' '}</div>
+            </div>
+            <div className='px-3 mt-2 pb-5'>
+                <div className='text-xs font-semibold text-C/35'>Value</div>
+                <div className='text-sm font-medium'>{config.value}</div>
+            </div>
 
-                    <span className="font-medium">
-                        {errors[0]}
-                    </span>
+            {errors.length > 0 && (
+                <div className='bg-rose-700 text-[10px] flex items-center justify-center size-fit px-2 py-1 text-white absolute -top-2 -right-2 rounded-full'>
+                    {errors.length}
                 </div>
             )}
+
+
+            <Handle
+                type="target"
+                position={Position.Left}
+                className="!size-3 !bg-primary"
+            />
 
             <Handle
                 type="source"
                 id="true"
                 position={Position.Right}
                 style={{ top: '35%' }}
-                className="!size-3 !border-2 !border-base-100 !bg-success"
+                className="!size-3 !bg-success"
             />
 
             <Handle
@@ -70,8 +95,9 @@ export default function ConditionNode({ data, selected, }: NodeProps<WorkflowNod
                 id="false"
                 position={Position.Right}
                 style={{ top: '65%' }}
-                className="!size-3 !border-2 !border-base-100 !bg-error"
+                className="!size-3 !bg-error"
             />
+
         </div>
     );
 }

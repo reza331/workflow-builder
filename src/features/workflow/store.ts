@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import type { WorkflowEdge, WorkflowNode, WorkflowSnapshot, WorkflowState } from './types';
 import type { NodeChange, EdgeChange } from '@xyflow/react';
 import { nanoid } from 'nanoid';
+import { WorkflowValidationError } from './validation';
 
 type WorkflowActions = {
     addNode: (node: WorkflowNode) => void;
@@ -25,6 +26,15 @@ type WorkflowActions = {
 
     startNodeDrag: () => void;
     finishNodeDrag: () => void;
+
+    loadWorkflow: (
+        nodes: WorkflowNode[],
+        edges: WorkflowEdge[],
+    ) => void;
+
+    setValidationErrors: (
+        errors: WorkflowValidationError[],
+    ) => void;
 }
 
 interface WorkflowStore extends WorkflowState {
@@ -343,6 +353,44 @@ const useWorkflowStore = create<WorkflowStore>((set) => ({
             }),
 
         finishNodeDrag: () => { },
+
+        setValidationErrors: (errors) =>
+            set((state) => {
+                const nodeErrors = new Map<string, string[]>();
+
+                errors.forEach((error) => {
+                    if (!error.nodeId) return;
+
+                    const currentErrors =
+                        nodeErrors.get(error.nodeId) ?? [];
+
+                    nodeErrors.set(error.nodeId, [
+                        ...currentErrors,
+                        error.message,
+                    ]);
+                });
+
+                return {
+                    nodes: state.nodes.map((node) => ({
+                        ...node,
+                        data: {
+                            ...node.data,
+                            errors: nodeErrors.get(node.id) ?? [],
+                        },
+                    })),
+                };
+            }),
+
+
+        loadWorkflow: (nodes, edges) =>
+            set({
+                nodes,
+                edges,
+                selectedNodeId: null,
+                isDirty: false,
+                past: [],
+                future: [],
+            }),
 
     }
 

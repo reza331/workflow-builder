@@ -1,20 +1,23 @@
 import type { ConditionConfig } from '@/features/workflow/types';
+import { AlertCircle } from 'lucide-react';
 
 type Props = {
     config: ConditionConfig;
     onChange: (
         updates: Partial<ConditionConfig>,
     ) => void;
+    errors: string[];
+
 };
 
-export default function ConditionInspector({ config, onChange, }: Props) {
+export default function ConditionInspector({ config, onChange, errors }: Props) {
     return (
-        <div className="space-y-4">
-            <label className="form-control">
-                <span className="mb-2 text-sm font-medium">
-                    Name
-                </span>
+        <div className="flex flex-col gap-5">
 
+            <label className="form-control">
+                <span className="text-xs font-medium">
+                    Node Name
+                </span>
                 <input
                     type="text"
                     value={config.name}
@@ -23,12 +26,12 @@ export default function ConditionInspector({ config, onChange, }: Props) {
                             name: event.target.value,
                         })
                     }
-                    className="input input-bordered w-full"
+                    className="input input-bordered w-full bg-A border-2 border-C/5 rounded-2xl text-[10px] mt-2"
                 />
             </label>
 
             <label className="form-control">
-                <span className="mb-2 text-sm font-medium">
+                <span className="text-xs font-medium">
                     Condition Type
                 </span>
 
@@ -41,7 +44,7 @@ export default function ConditionInspector({ config, onChange, }: Props) {
                                     .value as ConditionConfig['conditionType'],
                         })
                     }
-                    className="select select-bordered w-full"
+                    className="select w-full bg-A border-2 border-C/5 rounded-2xl textarea-xs mt-2"
                 >
                     <option value="customer_value">
                         Customer Value
@@ -54,7 +57,7 @@ export default function ConditionInspector({ config, onChange, }: Props) {
             </label>
 
             <label className="form-control">
-                <span className="mb-2 text-sm font-medium">
+                <span className="text-xs font-medium">
                     Operator
                 </span>
 
@@ -67,7 +70,7 @@ export default function ConditionInspector({ config, onChange, }: Props) {
                                     .value as ConditionConfig['operator'],
                         })
                     }
-                    className="select select-bordered w-full"
+                    className="select w-full bg-A border-2 border-C/5 rounded-2xl textarea-xs mt-2"
                 >
                     <option value="greater_than">
                         Greater than
@@ -84,7 +87,7 @@ export default function ConditionInspector({ config, onChange, }: Props) {
             </label>
 
             <label className="form-control">
-                <span className="mb-2 text-sm font-medium">
+                <span className="text-xs font-medium">
                     Value
                 </span>
 
@@ -96,9 +99,20 @@ export default function ConditionInspector({ config, onChange, }: Props) {
                             value: event.target.value,
                         })
                     }
-                    className="input input-bordered w-full"
+                    className="input input-bordered w-full bg-A border-2 border-C/5 rounded-2xl text-[10px] mt-2"
                 />
             </label>
+
+
+            {errors.length > 0 && (
+                <div className="mt-3 flex items-center gap-1 rounded-lg bg-error/10 px-2 py-2 text-xs text-error">
+                    <AlertCircle size={14} />
+                    <span className="font-medium text-[10px]">
+                        {errors[0]}
+                    </span>
+                </div>
+            )}
+
         </div>
     );
 }

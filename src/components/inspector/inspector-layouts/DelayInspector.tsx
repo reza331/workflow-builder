@@ -1,23 +1,26 @@
 import type { DelayConfig } from '@/features/workflow/types';
+import { AlertCircle } from 'lucide-react';
 
 type Props = {
     config: DelayConfig;
     onChange: (
         updates: Partial<Omit<DelayConfig, 'type'>>,
     ) => void;
+    errors: string[];
+
 };
 
 export default function DelayInspector({
     config,
     onChange,
+    errors
 }: Props) {
     return (
-        <div className="space-y-4">
+        <div className="flex flex-col gap-5">
             <label className="form-control">
-                <span className="mb-2 text-sm font-medium">
-                    Name
+                <span className="text-xs font-medium">
+                    Node Name
                 </span>
-
                 <input
                     type="text"
                     value={config.name}
@@ -26,17 +29,17 @@ export default function DelayInspector({
                             name: event.target.value,
                         })
                     }
-                    className="input input-bordered w-full"
+                    className="input input-bordered w-full bg-A border-2 border-C/5 rounded-2xl text-[10px] mt-2"
                 />
             </label>
 
             <label className="form-control">
-                <span className="mb-2 text-sm font-medium">
+                <span className="text-xs font-medium">
                     Amount
                 </span>
 
                 <input
-                    type="number"
+                    type="text"
                     min={1}
                     value={config.amount}
                     onChange={(event) =>
@@ -46,12 +49,12 @@ export default function DelayInspector({
                             ),
                         })
                     }
-                    className="input input-bordered w-full"
+                    className="input input-bordered w-full bg-A border-2 border-C/5 rounded-2xl text-[10px] mt-2"
                 />
             </label>
 
             <label className="form-control">
-                <span className="mb-2 text-sm font-medium">
+                <span className="text-xs font-medium">
                     Unit
                 </span>
 
@@ -63,7 +66,7 @@ export default function DelayInspector({
                                 .value as DelayConfig['unit'],
                         })
                     }
-                    className="select select-bordered w-full"
+                    className="select w-full bg-A border-2 border-C/5 rounded-2xl textarea-xs mt-2"
                 >
                     <option value="minutes">
                         Minutes
@@ -78,6 +81,16 @@ export default function DelayInspector({
                     </option>
                 </select>
             </label>
+
+            {errors.length > 0 && (
+                <div className="mt-3 flex items-center gap-1 rounded-lg bg-error/10 px-2 py-2 text-xs text-error">
+                    <AlertCircle size={14} />
+                    <span className="font-medium text-[10px]">
+                        {errors[0]}
+                    </span>
+                </div>
+            )}
+
         </div>
     );
 }

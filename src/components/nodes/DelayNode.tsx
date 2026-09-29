@@ -1,7 +1,6 @@
 'use client';
 
 import {
-    AlertCircle,
     Clock3,
 } from 'lucide-react';
 import {
@@ -25,53 +24,57 @@ export default function DelayNode({
     return (
         <div
             className={`
-                relative w-56 rounded-xl border bg-base-100 p-4 shadow-sm
-                ${
-                    selected
-                        ? 'border-primary ring-2 ring-primary/20'
-                        : 'border-base-300'
+                relative w-47 rounded-2xl  bg-B text-C  shadow-sm
+                ${selected
+                    ? 'border-primary border-2'
+                    : 'border-0'
                 }
             `}
         >
-            <Handle
-                type="target"
-                position={Position.Left}
-                className="!size-3 !border-2 !border-base-100 !bg-primary"
-            />
 
-            <div className="flex items-center gap-3">
-                <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-secondary/10">
+
+            <div className="flex p-3 items-center gap-3 rounded-t-2xl bg-Delay/15">
+                <div className="flex size-11 items-center justify-center rounded-lg bg-Delay/25">
                     <Clock3
-                        size={18}
-                        className="text-secondary"
+                        size={24}
+                        className="text-Delay"
                     />
                 </div>
-
-                <div className="min-w-0">
-                    <p className="text-xs text-base-content/50">
+                <div className="min-w-0 ">
+                    <p className="truncate text-sm font-semibold ">
+                        {config.type === 'delay'
+                            ? config.name
+                            : ''}
+                    </p>
+                    <p className="text-xs font-medium text-Delay">
                         Delay
                     </p>
 
-                    <p className="truncate text-sm font-semibold">
-                        {config.name}
-                    </p>
                 </div>
             </div>
 
-            {errors.length > 0 && (
-                <div className="mt-3 flex items-center gap-2 rounded-lg bg-error/10 px-3 py-2 text-xs text-error">
-                    <AlertCircle size={14} />
 
-                    <span className="font-medium">
-                        {errors[0]}
-                    </span>
+            <div className='p-3 mb-2'>
+                <div className='text-xs font-semibold text-C/35'>Duration</div>
+                <div className='text-sm font-medium'>{config.amount} {config.unit}</div>
+            </div>
+
+            {errors.length > 0 && (
+                <div className='bg-rose-700 text-[10px] flex items-center justify-center size-fit px-2 py-1 text-white absolute -top-2 -right-2 rounded-full'>
+                    {errors.length}
                 </div>
             )}
 
             <Handle
+                type="target"
+                position={Position.Left}
+                className="!size-3 !bg-primary"
+            />
+
+            <Handle
                 type="source"
                 position={Position.Right}
-                className="!size-3 !border-2 !border-base-100 !bg-secondary"
+                className="!size-3 !bg-secondary"
             />
         </div>
     );

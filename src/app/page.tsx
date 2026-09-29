@@ -7,7 +7,7 @@ import { ReactFlowProvider } from '@xyflow/react';
 export default function Home() {
   return (
     <>
-      <div className="h-dvh flex flex-col">
+      <div className="h-dvh flex flex-col relative">
         <WorkflowToolbar />
         <div className="w-full h-[calc(100dvh-64px)] flex">
           <NodeLibrary />

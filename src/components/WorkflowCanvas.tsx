@@ -1,16 +1,13 @@
 'use client';
 import '@xyflow/react/dist/style.css';
-import { useReactFlow, Background, Controls, MarkerType, ReactFlow, type NodeTypes, type Connection, } from '@xyflow/react';
-import { useEdges, useNodes, useSelectedNodeId, useWorkflowActions } from '@/features/workflow/store';
-import { useCallback, useEffect } from 'react';
-import { WorkflowNode, WorkflowEdge, WorkflowNodeType } from '@/features/workflow/types';
+import { Background, Controls, ReactFlow, type NodeTypes } from '@xyflow/react';
+import { useEdges, useNodes, useWorkflowActions } from '@/features/workflow/store';
 import TriggerNode from './nodes/TriggerNode';
 import ConditionNode from './nodes/ConditionNode';
 import ActionNode from './nodes/ActionNode';
 import DelayNode from './nodes/DelayNode';
-import { canConnect } from '@/features/workflow/validation';
-import type { DragEvent } from 'react';
-import { createWorkflowNode } from '@/features/workflow/node-factory';
+import useWorkflowKeyboardHandlers from '@/hooks/workflow-keyboard-handlers';
+import useWorkflowCanvasHandlers from '@/hooks/workflow-canvas-handlers';
 
 const nodeTypes: NodeTypes = {
     trigger: TriggerNode,
@@ -23,188 +20,9 @@ export default function WorkflowCanvas() {
 
     const nodes = useNodes();
     const edges = useEdges();
-    const selectedNodeId = useSelectedNodeId();
-    const { screenToFlowPosition } = useReactFlow();
-
-    const { addNode, startNodeDrag, finishNodeDrag, applyNodeChanges, applyEdgeChanges, selectNode, addEdge, deleteNode, deleteEdge, duplicateNode, redo, undo } = useWorkflowActions();
-
-    const handleNodeClick = useCallback(
-        (_event: React.MouseEvent, node: WorkflowNode) => {
-            selectNode(node.id);
-        },
-        [selectNode],
-    );
-
-    const handlePaneClick = useCallback(() => {
-        selectNode(null);
-    }, [selectNode]);
-
-    const handleConnect = useCallback(
-        (connection: Connection) => {
-
-            const isValid = canConnect(
-                connection,
-                nodes,
-                edges,
-            );
-
-            if (!isValid) {
-                return;
-            }
-
-            if (
-                !connection.source ||
-                !connection.target
-            ) {
-                return;
-            }
-
-            const edge: WorkflowEdge = {
-                id: `${connection.source}-${connection.sourceHandle ?? 'default'}-${connection.target}-${connection.targetHandle ?? 'default'}`,
-                source: connection.source,
-                target: connection.target,
-                sourceHandle: connection.sourceHandle,
-                targetHandle: connection.targetHandle,
-                markerEnd: {
-                    type: MarkerType.ArrowClosed,
-                },
-            };
-
-            addEdge(edge);
-        },
-        [addEdge, nodes, edges],
-    );
-
-    const handleDragOver = useCallback(
-        (event: DragEvent) => {
-            event.preventDefault();
-            event.dataTransfer.dropEffect = 'move';
-        },
-        [],
-    );
-
-    const handleDrop = useCallback(
-        (event: DragEvent) => {
-            event.preventDefault();
-
-            const type = event.dataTransfer.getData(
-                'application/reactflow',
-            ) as WorkflowNodeType;
-
-            if (!type) {
-                return;
-            }
-
-            const position = screenToFlowPosition({
-                x: event.clientX,
-                y: event.clientY,
-            });
-
-            const node = createWorkflowNode(
-                type,
-                position,
-            );
-
-            addNode(node);
-        },
-
-        [addNode, screenToFlowPosition],
-
-    );
-
-    useEffect(() => {
-
-        const handleKeyDown = (event: KeyboardEvent) => {
-
-            // Undo / Redo ==> Cntrl + Z / Cntrl + Shift + Z
-
-            if (
-                (event.ctrlKey || event.metaKey) &&
-                event.key.toLowerCase() === 'z'
-            ) {
-                const target = event.target as HTMLElement;
-
-                if (
-                    target.tagName === 'INPUT' ||
-                    target.tagName === 'TEXTAREA'
-                ) {
-                    return;
-                }
-
-                event.preventDefault();
-
-                if (event.shiftKey) {
-                    redo();
-                } else {
-                    undo();
-                }
-
-                return;
-            }
-
-
-            // Duplicate ==> Cntrl + D
-
-            if (
-                (event.ctrlKey || event.metaKey) &&
-                event.key.toLowerCase() === 'd'
-            ) {
-                const target = event.target as HTMLElement;
-
-                if (
-                    target.tagName === 'INPUT' ||
-                    target.tagName === 'TEXTAREA'
-                ) {
-                    return;
-                }
-
-                if (selectedNodeId) {
-                    event.preventDefault();
-                    duplicateNode(selectedNodeId);
-                }
-
-                return;
-            }
-
-
-            // Delete key ==> delete nodes and edges
-
-            if (event.key !== 'Delete') {
-                return;
-            }
-
-            const target = event.target as HTMLElement;
-
-            if (
-                target.tagName === 'INPUT' ||
-                target.tagName === 'TEXTAREA'
-            ) {
-                return;
-            }
-
-            if (selectedNodeId) {
-                deleteNode(selectedNodeId);
-                return;
-            }
-
-            const selectedEdge = edges.find(
-                (edge) => edge.selected,
-            );
-
-            if (selectedEdge) {
-                deleteEdge(selectedEdge.id);
-            }
-        };
-
-        window.addEventListener('keydown', handleKeyDown);
-
-        return () => {
-            window.removeEventListener(
-                'keydown',
-                handleKeyDown,
-            );
-        };
-    }, [selectedNodeId, edges, deleteNode, deleteEdge, duplicateNode, undo, redo]);
+    const { handleConnect, handleDragOver, handleDrop, handleNodeClick, handlePaneClick } = useWorkflowCanvasHandlers()
+    useWorkflowKeyboardHandlers()
+    const { startNodeDrag, finishNodeDrag, applyNodeChanges, applyEdgeChanges } = useWorkflowActions();
 
     return (
         <div className="h-full w-full">
@@ -227,4 +45,5 @@ export default function WorkflowCanvas() {
             </ReactFlow>
         </div>
     );
+
 }

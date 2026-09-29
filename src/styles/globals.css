@@ -5,8 +5,9 @@
     --color-A: #fcfcfc;
     --color-B: #ffffff;
     --color-C: black;
-}
-
-x{
-    color: #00000075;
+    --color-Trigger: #418C66;
+    --color-Condition: #755CE8;
+    --color-Action: #1648B6;
+    --color-Delay: #BA7534;
+    --color-Btn: #1648B6;
 }

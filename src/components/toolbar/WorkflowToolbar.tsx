@@ -1,15 +1,25 @@
 'use client';
 import { Redo2, Undo2 } from 'lucide-react';
 import { useWorkflowActions, usePast, useFuture } from '@/features/workflow/store';
+import { CircleCheck } from 'lucide-react';
+import { FileJson } from 'lucide-react';
+import { Save } from 'lucide-react';
+import useWorkflowHandlers from '@/hooks/workflow-handlers';
+import { useEffect } from 'react';
+
 
 export default function WorkflowToolbar() {
 
     const past = usePast();
     const future = useFuture();
-    const { undo, redo } = useWorkflowActions()
+    const { handleUndo, handleRedo, handleValidate, handleExport, handleLoadDraft, handleSaveDraft } = useWorkflowHandlers()
+
+    useEffect(() => {
+        handleLoadDraft();
+    }, [handleLoadDraft]);
 
     return (
-        <header className="flex h-16 shrink-0 justify-between items-center shadow-lg bg-B px-4 text-C">
+        <header className="flex relative z-50 h-16 shrink-0 justify-between items-center shadow-lg bg-B px-4 text-C">
             <h2 className='font-bold text-2xl'>Workflow Builder</h2>
             <div className='flex items-center gap-2'>
                 {/* undo / redo */}
@@ -18,7 +28,7 @@ export default function WorkflowToolbar() {
                         type="button"
                         className="btn bg-transparent border-0 outline-0 ring-0 btn-sm text-C disabled:text-C/30"
                         disabled={past.length === 0}
-                        onClick={undo}
+                        onClick={handleUndo}
                         aria-label="Undo"
                         title="Undo"
                     >
@@ -29,7 +39,7 @@ export default function WorkflowToolbar() {
                         type="button"
                         className="btn bg-transparent border-0 outline-0 ring-0 btn-sm text-C disabled:text-C/30"
                         disabled={future.length === 0}
-                        onClick={redo}
+                        onClick={handleRedo}
                         aria-label="Redo"
                         title="Redo"
                     >
@@ -38,19 +48,19 @@ export default function WorkflowToolbar() {
                     </button>
                 </div>
                 {/* validate  */}
-                <button className="btn btn-outline btn-primary rounded-xl h-8 border-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="size-[1.2em]"><path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /></svg>
+                <button onClick={handleValidate} className="btn btn-outline bg-transparent ring-0 border-Btn text-Btn rounded-xl btn-sm border-2">
+                    <CircleCheck size={18} />
                     Validate
                 </button>
                 {/* export json  */}
-                <button className="btn btn-outline btn-primary rounded-xl h-8 border-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="size-[1.2em]"><path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /></svg>
+                <button onClick={handleExport} className="btn btn-outline bg-transparent ring-0 border-Btn text-Btn  rounded-xl btn-sm border-2">
+                    <FileJson size={18} />
                     Export JSON
                 </button>
                 {/* export json  */}
-                <button className="btn btn-primary rounded-xl h-8 border-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="size-[1.2em]"><path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /></svg>
-                    Save
+                <button onClick={handleSaveDraft} className="btn ring-0  border-Btn bg-Btn rounded-xl h-8 border-2 btn-sm">
+                    <Save size={18} />
+                    Save Draft
                 </button>
             </div>
         </header>

@@ -5,12 +5,15 @@ import TriggerInspector from './inspector-layouts/TriggerInspector';
 import ConditionInspector from './inspector-layouts/ConditionInspector';
 import ActionInspector from './inspector-layouts/ActionInspector';
 import DelayInspector from './inspector-layouts/DelayInspector';
+import { MousePointerClick } from 'lucide-react';
+import useWorkflowHandlers from '@/hooks/workflow-handlers';
 
 export default function Inspector() {
 
     const nodes = useNodes();
     const selectedNodeId = useSelectedNodeId();
     const { updateNode } = useWorkflowActions();
+    const { handleDelete, handleDuplicate } = useWorkflowHandlers()
 
     const selectedNode = useMemo(
         () =>
@@ -23,15 +26,24 @@ export default function Inspector() {
 
     if (!selectedNode) {
         return (
-            <aside className="flex h-full w-72 items-center justify-center border-l border-base-300 bg-base-100 p-6">
-                <p className="text-center text-sm text-base-content/50">
-                    Select a node to edit its settings.
-                </p>
+            <aside className="flex h-full w-72 items-center justify-center bg-B shadow-md p-6">
+                <div className='flex flex-col items-center gap-2'>
+                    <MousePointerClick
+                        size={32}
+                        className="text-C/35"
+                    />
+                    <p className="text-center text-xs text-C font-semibold">
+                        No node selected
+                    </p>
+                    <p className="text-center text-[10px] text-C/35 font-semibold">
+                        Select a node on the canvas to edit its settings.
+                    </p>
+                </div>
             </aside>
         );
     }
 
-    const { config } = selectedNode.data;
+    const { config, errors } = selectedNode.data;
 
     const updateConfig = (
         updates: Partial<Omit<typeof config, 'type'>>,
@@ -48,20 +60,18 @@ export default function Inspector() {
     };
 
     return (
-        <aside className="h-full w-72 border-l border-base-300 bg-base-100">
-            
-            <div className="border-b border-base-300 p-4">
-                <p className="text-xs font-medium uppercase tracking-wide text-base-content/50">
-                    {config.type}
-                </p>
-                <h2 className="mt-1 text-base font-semibold">
-                    Settings
+        <aside className="h-full w-75 bg-B text-C shadow-md relative">
+
+            <div className="border-b border-C/10 p-4">
+                <h2 className="mt-1 text-sm font-semibold">
+                    Inspector
                 </h2>
             </div>
 
             <div className="space-y-4 p-4">
                 {config.type === 'trigger' && (
                     <TriggerInspector
+                        errors={errors}
                         config={config}
                         onChange={updateConfig}
                     />
@@ -69,6 +79,7 @@ export default function Inspector() {
 
                 {config.type === 'condition' && (
                     <ConditionInspector
+                        errors={errors}
                         config={config}
                         onChange={updateConfig}
                     />
@@ -76,6 +87,7 @@ export default function Inspector() {
 
                 {config.type === 'action' && (
                     <ActionInspector
+                        errors={errors}
                         config={config}
                         onChange={updateConfig}
                     />
@@ -83,12 +95,19 @@ export default function Inspector() {
 
                 {config.type === 'delay' && (
                     <DelayInspector
+                        errors={errors}
                         config={config}
                         onChange={updateConfig}
                     />
                 )}
 
             </div>
+
+            <div className='p-3 absolute bottom-0 left-0 w-full flex items-center gap-2 border-t border-C/5'>
+                <button onClick={handleDuplicate} className="btn btn-outline btn-primary w-1/2 btn-sm rounded-xl">Duplicate</button>
+                <button onClick={handleDelete} className="btn btn-outline btn-secondary w-1/2 btn-sm rounded-xl">Delete</button>
+            </div>
+
         </aside>
     );
 }
