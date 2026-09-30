@@ -22,7 +22,11 @@ export default function WorkflowCanvas() {
     const edges = useEdges();
     const { handleConnect, handleDragOver, handleDrop, handleNodeClick, handlePaneClick } = useWorkflowCanvasHandlers()
     useWorkflowKeyboardHandlers()
-    const { startNodeDrag, finishNodeDrag, applyNodeChanges, applyEdgeChanges } = useWorkflowActions();
+    const { startNodeDrag, finishNodeDrag, applyNodeChanges, applyEdgeChanges, deleteEdge } = useWorkflowActions();
+
+    const selectedEdge = edges.find(
+        (edge) => edge.selected,
+    );
 
     return (
         <div className="h-full w-full">
@@ -40,9 +44,18 @@ export default function WorkflowCanvas() {
                 onDragOver={handleDragOver}
                 onDrop={handleDrop}
                 proOptions={{ hideAttribution: true }}
+                fitView
             >
                 <Background />
                 <Controls className='bottom-12!' style={{ color: '#00000075' }} />
+                {selectedEdge && (
+                    <button
+                        onClick={() => deleteEdge(selectedEdge.id)}
+                        className="absolute top-2 right-2 z-50 btn btn-error btn-sm text-white bg-rose-700 rounded-xl"
+                    >
+                        Delete Connection
+                    </button>
+                )}
             </ReactFlow>
         </div>
     );

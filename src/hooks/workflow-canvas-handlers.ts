@@ -67,6 +67,31 @@ export default function useWorkflowCanvasHandlers() {
                 target: connection.target,
                 sourceHandle: connection.sourceHandle,
                 targetHandle: connection.targetHandle,
+                label:
+                    connection.sourceHandle === 'true'
+                        ? 'True'
+                        : connection.sourceHandle === 'false'
+                            ? 'False'
+                            : undefined,
+                style: {
+                    stroke:
+                        connection.sourceHandle === 'true'
+                            ? '#22c55e'
+                            : connection.sourceHandle === 'false'
+                                ? '#ef4444'
+                                : undefined,
+
+                },
+                labelStyle: {
+                    fontWeight: 600,
+                    fontSize: 12,
+                    fill: connection.sourceHandle === 'true'
+                        ? '#22c55e'
+                        : connection.sourceHandle === 'false'
+                            ? '#ef4444'
+                            : undefined,
+                },
+
                 markerEnd: {
                     type: MarkerType.ArrowClosed,
                 },
