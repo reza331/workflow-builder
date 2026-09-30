@@ -34,6 +34,11 @@ export default function ShortcutsBoard() {
                 <kbd className="kbd kbd-xs">e</kbd>
                 <div className="text-xs ms-2">Export</div>
             </div>
+            {/* Delete */}
+            <div className="flex items-center ms-5">
+                <kbd className="kbd kbd-xs">Del</kbd>
+                <div className="text-xs ms-2">Delete</div>
+            </div>
         </div>
     )
 }
